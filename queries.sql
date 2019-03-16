@@ -61,3 +61,51 @@ select c.curso, c.ano_lectivo as ano, min(c.media) as media
 from zcands c inner join zalus a on c.bi = a.bi and c.ano_lectivo = a.a_lect_matricula and c.curso = a.curso
 where c.media is not null
 group by c.curso, c.ano_lectivo
+
+/*
+Question 3 (constant subquery)
+*/
+/* X*/
+/* Y*/
+/* Z*/
+
+/*
+Question 3 (variable subquery)
+*/
+/* X*/
+/* Y*/
+/* Z*/
+
+/*
+Question 4 (first way)
+*/
+/* X*/
+with media_curso_ano as (
+select curso, a_lect_conclusao as ano, round(avg(med_final),2) as media --max or avg?
+from xalus
+where a_lect_conclusao is not null
+group by curso, a_lect_conclusao
+order by a_lect_conclusao)
+select *
+from media_curso_ano t1
+where media = (select max(media) from media_curso_ano t2 where t2.ano = t1.ano)
+/* Y*/
+with media_curso_ano as (
+select curso, a_lect_conclusao as ano, round(avg(med_final),2) as media --max or avg?
+from yalus
+where a_lect_conclusao is not null
+group by curso, a_lect_conclusao
+order by a_lect_conclusao)
+select *
+from media_curso_ano t1
+where media = (select max(media) from media_curso_ano t2 where t2.ano = t1.ano)
+/* Z*/
+with media_curso_ano as (
+select curso, a_lect_conclusao as ano, round(avg(med_final),2) as media --max or avg?
+from yalus
+where a_lect_conclusao is not null
+group by curso, a_lect_conclusao
+order by a_lect_conclusao)
+select *
+from media_curso_ano t1
+where media = (select max(media) from media_curso_ano t2 where t2.ano = t1.ano)
