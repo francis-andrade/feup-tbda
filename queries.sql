@@ -77,7 +77,7 @@ Question 3 (variable subquery)
 /* Z*/
 
 /*
-Question 4 (first way)
+Question 4 (first way - using a subquery to select value equal to max)
 */
 /* X*/
 with media_curso_ano as (
@@ -109,3 +109,43 @@ order by a_lect_conclusao)
 select *
 from media_curso_ano t1
 where media = (select max(media) from media_curso_ano t2 where t2.ano = t1.ano)
+
+/*
+Question 4 (second way - using left outer join on lower averages and filter for unmatched (aka highest))
+*/
+/* X*/
+with media_curso_ano as (
+select curso, a_lect_conclusao as ano, round(avg(med_final),2) as media --max or avg?
+from xalus
+where a_lect_conclusao is not null
+group by curso, a_lect_conclusao
+order by a_lect_conclusao)
+select t1.*
+from media_curso_ano t1 left outer join media_curso_ano t2
+on t1.ano = t2.ano and t1.media < t2.media
+where t2.ano is null
+order by t1.ano
+/* Y*/
+with media_curso_ano as (
+select curso, a_lect_conclusao as ano, round(avg(med_final),2) as media --max or avg?
+from yalus
+where a_lect_conclusao is not null
+group by curso, a_lect_conclusao
+order by a_lect_conclusao)
+select t1.*
+from media_curso_ano t1 left outer join media_curso_ano t2
+on t1.ano = t2.ano and t1.media < t2.media
+where t2.ano is null
+order by t1.ano
+/* Z*/
+with media_curso_ano as (
+select curso, a_lect_conclusao as ano, round(avg(med_final),2) as media --max or avg?
+from yalus
+where a_lect_conclusao is not null
+group by curso, a_lect_conclusao
+order by a_lect_conclusao)
+select t1.*
+from media_curso_ano t1 left outer join media_curso_ano t2
+on t1.ano = t2.ano and t1.media < t2.media
+where t2.ano is null
+order by t1.ano
