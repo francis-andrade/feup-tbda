@@ -151,6 +151,20 @@ where t2.ano is null
 order by t1.ano
 
 /*
+Question 5 (B-tree)
+*/
+/* X*/
+/* Y*/
+/* Z*/
+
+/*
+Question 5 (Bitmap)
+*/
+/* X*/
+/* Y*/
+/* Z*/
+
+/*
 Question 6 (double negation)
 */
 /* X*/
@@ -186,3 +200,28 @@ from zlics l inner join zcands c
 on l.codigo = c.curso
 where c.resultado = 'C' and not exists (select 1 from aceites_nao_matriculados anm where anm.curso = c.curso and anm.ano = c.ano_lectivo)
 group by l.sigla, l.nome, c.ano_lectivo
+
+/*
+Question 6 (counting)
+*/
+/* X*/
+select l.sigla, l.nome, c.curso, c.ano_lectivo as ano
+from xcands c inner join xlics l
+on l.codigo = c.curso
+where c.resultado='C'
+group by l.sigla, l.nome, c.curso, c.ano_lectivo
+having count(*) = (select count(*) from xalus a where a.a_lect_matricula = c.ano_lectivo and a.curso = c.curso)
+/* Y*/
+select l.sigla, l.nome, c.curso, c.ano_lectivo as ano
+from ycands c inner join ylics l
+on l.codigo = c.curso
+where c.resultado='C'
+group by l.sigla, l.nome, c.curso, c.ano_lectivo
+having count(*) = (select count(*) from yalus a where a.a_lect_matricula = c.ano_lectivo and a.curso = c.curso)
+/* Z*/
+select l.sigla, l.nome, c.curso, c.ano_lectivo as ano
+from zcands c inner join zlics l
+on l.codigo = c.curso
+where c.resultado='C'
+group by l.sigla, l.nome, c.curso, c.ano_lectivo
+having count(*) = (select count(*) from zalus a where a.a_lect_matricula = c.ano_lectivo and a.curso = c.curso)
