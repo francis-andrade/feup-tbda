@@ -37,9 +37,27 @@ ALTER TABLE zalus ADD CONSTRAINT zalus_fk_cands FOREIGN KEY (bi, curso, a_lect_m
 Question 1 
 */
 /* X*/
-SELECT a.numero, a.a_lect_conclusao - a.a_lect_matricula AS "Número de Anos Demorado" FROM xalus a JOIN xlics l  ON a.curso = l.codigo WHERE a.estado = 'C' AND l.sigla = 'EIC' AND a.a_lect_conclusao - a.a_lect_matricula < 5;
+SELECT a.numero, a.a_lect_conclusao - a.a_lect_matricula AS "NÃºmero de Anos Demorado" FROM xalus a JOIN xlics l  ON a.curso = l.codigo WHERE a.estado = 'C' AND l.sigla = 'EIC' AND a.a_lect_conclusao - a.a_lect_matricula < 5;
 /* Y*/
-SELECT a.numero, a.a_lect_conclusao - a.a_lect_matricula AS "Número de Anos Demorado" FROM yalus a JOIN ylics l  ON a.curso = l.codigo WHERE a.estado = 'C' AND l.sigla = 'EIC' AND a.a_lect_conclusao - a.a_lect_matricula < 5;
+SELECT a.numero, a.a_lect_conclusao - a.a_lect_matricula AS "NÃºmero de Anos Demorado" FROM yalus a JOIN ylics l  ON a.curso = l.codigo WHERE a.estado = 'C' AND l.sigla = 'EIC' AND a.a_lect_conclusao - a.a_lect_matricula < 5;
 /* Z*/
-SELECT a.numero, a.a_lect_conclusao - a.a_lect_matricula AS "Número de Anos Demorado" FROM zalus a JOIN zlics l  ON a.curso = l.codigo AND a.estado = 'C' AND l.sigla = 'EIC' AND a.a_lect_conclusao - a.a_lect_matricula < 5;
+SELECT a.numero, a.a_lect_conclusao - a.a_lect_matricula AS "NÃºmero de Anos Demorado" FROM zalus a JOIN zlics l  ON a.curso = l.codigo AND a.estado = 'C' AND l.sigla = 'EIC' AND a.a_lect_conclusao - a.a_lect_matricula < 5;
 
+/*
+Question 2
+*/
+/* X*/
+select c.curso, c.ano_lectivo as ano, min(c.media) as media
+from xcands c inner join xalus a on c.bi = a.bi and c.ano_lectivo = a.a_lect_matricula and c.curso = a.curso
+where c.media is not null
+group by c.curso, c.ano_lectivo
+/* Y*/
+select c.curso, c.ano_lectivo as ano, min(c.media) as media
+from ycands c inner join yalus a on c.bi = a.bi and c.ano_lectivo = a.a_lect_matricula and c.curso = a.curso
+where c.media is not null
+group by c.curso, c.ano_lectivo
+/* Z*/
+select c.curso, c.ano_lectivo as ano, min(c.media) as media
+from zcands c inner join zalus a on c.bi = a.bi and c.ano_lectivo = a.a_lect_matricula and c.curso = a.curso
+where c.media is not null
+group by c.curso, c.ano_lectivo
