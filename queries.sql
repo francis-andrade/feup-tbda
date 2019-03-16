@@ -149,3 +149,40 @@ from media_curso_ano t1 left outer join media_curso_ano t2
 on t1.ano = t2.ano and t1.media < t2.media
 where t2.ano is null
 order by t1.ano
+
+/*
+Question 6 (double negation)
+*/
+/* X*/
+with aceites_nao_matriculados as(
+select c.curso, c.ano_lectivo as ano
+from xcands c
+where c.resultado='C' and not exists (select 1 from xalus a where a.a_lect_matricula = c.ano_lectivo and a.curso = c.curso and c.bi = a.bi)
+group by c.curso, c.ano_lectivo)
+select l.sigla, l.nome, c.ano_lectivo as ano
+from xlics l inner join xcands c
+on l.codigo = c.curso
+where c.resultado = 'C' and not exists (select 1 from aceites_nao_matriculados anm where anm.curso = c.curso and anm.ano = c.ano_lectivo)
+group by l.sigla, l.nome, c.ano_lectivo
+/* Y*/
+with aceites_nao_matriculados as(
+select c.curso, c.ano_lectivo as ano
+from ycands c
+where c.resultado='C' and not exists (select 1 from xalus a where a.a_lect_matricula = c.ano_lectivo and a.curso = c.curso and c.bi = a.bi)
+group by c.curso, c.ano_lectivo)
+select l.sigla, l.nome, c.ano_lectivo as ano
+from ylics l inner join ycands c
+on l.codigo = c.curso
+where c.resultado = 'C' and not exists (select 1 from aceites_nao_matriculados anm where anm.curso = c.curso and anm.ano = c.ano_lectivo)
+group by l.sigla, l.nome, c.ano_lectivo
+/* Z*/
+with aceites_nao_matriculados as(
+select c.curso, c.ano_lectivo as ano
+from zcands c
+where c.resultado='C' and not exists (select 1 from xalus a where a.a_lect_matricula = c.ano_lectivo and a.curso = c.curso and c.bi = a.bi)
+group by c.curso, c.ano_lectivo)
+select l.sigla, l.nome, c.ano_lectivo as ano
+from zlics l inner join zcands c
+on l.codigo = c.curso
+where c.resultado = 'C' and not exists (select 1 from aceites_nao_matriculados anm where anm.curso = c.curso and anm.ano = c.ano_lectivo)
+group by l.sigla, l.nome, c.ano_lectivo
