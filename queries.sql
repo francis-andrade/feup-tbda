@@ -84,8 +84,7 @@ with media_curso_ano as (
 select curso, a_lect_conclusao as ano, round(avg(med_final),2) as media --max or avg?
 from xalus
 where a_lect_conclusao is not null
-group by curso, a_lect_conclusao
-order by a_lect_conclusao)
+group by curso, a_lect_conclusao)
 select *
 from media_curso_ano t1
 where media = (select max(media) from media_curso_ano t2 where t2.ano = t1.ano)
@@ -94,18 +93,16 @@ with media_curso_ano as (
 select curso, a_lect_conclusao as ano, round(avg(med_final),2) as media --max or avg?
 from yalus
 where a_lect_conclusao is not null
-group by curso, a_lect_conclusao
-order by a_lect_conclusao)
+group by curso, a_lect_conclusao)
 select *
 from media_curso_ano t1
 where media = (select max(media) from media_curso_ano t2 where t2.ano = t1.ano)
 /* Z*/
 with media_curso_ano as (
 select curso, a_lect_conclusao as ano, round(avg(med_final),2) as media --max or avg?
-from yalus
+from zalus
 where a_lect_conclusao is not null
-group by curso, a_lect_conclusao
-order by a_lect_conclusao)
+group by curso, a_lect_conclusao)
 select *
 from media_curso_ano t1
 where media = (select max(media) from media_curso_ano t2 where t2.ano = t1.ano)
@@ -118,8 +115,7 @@ with media_curso_ano as (
 select curso, a_lect_conclusao as ano, round(avg(med_final),2) as media --max or avg?
 from xalus
 where a_lect_conclusao is not null
-group by curso, a_lect_conclusao
-order by a_lect_conclusao)
+group by curso, a_lect_conclusao)
 select t1.*
 from media_curso_ano t1 left outer join media_curso_ano t2
 on t1.ano = t2.ano and t1.media < t2.media
@@ -130,8 +126,7 @@ with media_curso_ano as (
 select curso, a_lect_conclusao as ano, round(avg(med_final),2) as media --max or avg?
 from yalus
 where a_lect_conclusao is not null
-group by curso, a_lect_conclusao
-order by a_lect_conclusao)
+group by curso, a_lect_conclusao)
 select t1.*
 from media_curso_ano t1 left outer join media_curso_ano t2
 on t1.ano = t2.ano and t1.media < t2.media
@@ -140,10 +135,9 @@ order by t1.ano
 /* Z*/
 with media_curso_ano as (
 select curso, a_lect_conclusao as ano, round(avg(med_final),2) as media --max or avg?
-from yalus
+from zalus
 where a_lect_conclusao is not null
-group by curso, a_lect_conclusao
-order by a_lect_conclusao)
+group by curso, a_lect_conclusao)
 select t1.*
 from media_curso_ano t1 left outer join media_curso_ano t2
 on t1.ano = t2.ano and t1.media < t2.media
@@ -182,7 +176,7 @@ group by l.sigla, l.nome, c.ano_lectivo
 with aceites_nao_matriculados as(
 select c.curso, c.ano_lectivo as ano
 from ycands c
-where c.resultado='C' and not exists (select 1 from xalus a where a.a_lect_matricula = c.ano_lectivo and a.curso = c.curso and c.bi = a.bi)
+where c.resultado='C' and not exists (select 1 from yalus a where a.a_lect_matricula = c.ano_lectivo and a.curso = c.curso and c.bi = a.bi)
 group by c.curso, c.ano_lectivo)
 select l.sigla, l.nome, c.ano_lectivo as ano
 from ylics l inner join ycands c
@@ -193,7 +187,7 @@ group by l.sigla, l.nome, c.ano_lectivo
 with aceites_nao_matriculados as(
 select c.curso, c.ano_lectivo as ano
 from zcands c
-where c.resultado='C' and not exists (select 1 from xalus a where a.a_lect_matricula = c.ano_lectivo and a.curso = c.curso and c.bi = a.bi)
+where c.resultado='C' and not exists (select 1 from zalus a where a.a_lect_matricula = c.ano_lectivo and a.curso = c.curso and c.bi = a.bi)
 group by c.curso, c.ano_lectivo)
 select l.sigla, l.nome, c.ano_lectivo as ano
 from zlics l inner join zcands c
