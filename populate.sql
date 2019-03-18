@@ -49,5 +49,10 @@ ALTER TABLE zalus ADD CONSTRAINT zalus_fk_curso FOREIGN KEY (curso) REFERENCES z
 ALTER TABLE zalus ADD CONSTRAINT zalus_fk_cands FOREIGN KEY (bi, curso, a_lect_matricula) REFERENCES zcands(bi, curso, ano_lectivo);
 
 -- indexes
-CREATE INDEX q1_alus ON zalus(estado, a_lect_conclusao - a_lect_matricula);
-CREATE INDEX q1_lics ON zlics(sigla);
+CREATE INDEX q1_alus ON zalus(estado, a_lect_conclusao - a_lect_matricula, curso);
+CREATE INDEX q1_lics ON zlics(codigo, sigla);
+--CREATE INDEX q1_lics ON zlics(sigla, codigo);
+
+SET TIMING ON;
+SET AUTOTRACE TRACE EXPLAIN;
+SET AUTOTRACE ON EXPLAIN;
