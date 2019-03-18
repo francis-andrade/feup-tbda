@@ -17,32 +17,37 @@ Question 2
 select c.curso, c.ano_lectivo as ano, min(c.media) as media
 from xcands c inner join xalus a on c.bi = a.bi and c.ano_lectivo = a.a_lect_matricula and c.curso = a.curso
 where c.media is not null
-group by c.curso, c.ano_lectivo
+group by c.curso, c.ano_lectivo;
 /* Y*/
 select c.curso, c.ano_lectivo as ano, min(c.media) as media
 from ycands c inner join yalus a on c.bi = a.bi and c.ano_lectivo = a.a_lect_matricula and c.curso = a.curso
 where c.media is not null
-group by c.curso, c.ano_lectivo
+group by c.curso, c.ano_lectivo;
 /* Z*/
 select c.curso, c.ano_lectivo as ano, min(c.media) as media
 from zcands c inner join zalus a on c.bi = a.bi and c.ano_lectivo = a.a_lect_matricula and c.curso = a.curso
 where c.media is not null
-group by c.curso, c.ano_lectivo
+group by c.curso, c.ano_lectivo;
 
 /*
 Question 3 (constant subquery)
 */
 /* X*/
+SELECT c.ano_lectivo AS "Ano Letivo", c.bi AS "Aluno (BI)" FROM xcands c WHERE c.bi NOT IN(SELECT a.bi FROM xalus a); 
 /* Y*/
+SELECT c.ano_lectivo AS "Ano Letivo", c.bi AS "Aluno (BI)" FROM ycands c WHERE c.bi NOT IN(SELECT a.bi FROM yalus a); 
 /* Z*/
+SELECT c.ano_lectivo AS "Ano Letivo", c.bi AS "Aluno (BI)" FROM zcands c WHERE c.bi NOT IN(SELECT a.bi FROM zalus a); 
 
 /*
 Question 3 (variable subquery)
 */
 /* X*/
+SELECT c.ano_lectivo AS "Ano Letivo", c.bi AS "Aluno (BI)" FROM xcands c WHERE NOT EXISTS (SELECT * FROM xalus a WHERE a.bi = c.bi);
 /* Y*/
+SELECT c.ano_lectivo AS "Ano Letivo", c.bi AS "Aluno (BI)" FROM ycands c WHERE NOT EXISTS (SELECT * FROM yalus a WHERE a.bi = c.bi);
 /* Z*/
-
+SELECT c.ano_lectivo AS "Ano Letivo", c.bi AS "Aluno (BI)" FROM zcands c WHERE NOT EXISTS (SELECT * FROM zalus a WHERE a.bi = c.bi);
 /*
 Question 4 (first way - using a subquery to select value equal to max)
 */
@@ -54,7 +59,7 @@ where a_lect_conclusao is not null
 group by curso, a_lect_conclusao)
 select *
 from media_curso_ano t1
-where media = (select max(media) from media_curso_ano t2 where t2.ano = t1.ano)
+where media = (select max(media) from media_curso_ano t2 where t2.ano = t1.ano);
 /* Y*/
 with media_curso_ano as (
 select curso, a_lect_conclusao as ano, round(avg(med_final),2) as media --max or avg?
@@ -63,7 +68,7 @@ where a_lect_conclusao is not null
 group by curso, a_lect_conclusao)
 select *
 from media_curso_ano t1
-where media = (select max(media) from media_curso_ano t2 where t2.ano = t1.ano)
+where media = (select max(media) from media_curso_ano t2 where t2.ano = t1.ano);
 /* Z*/
 with media_curso_ano as (
 select curso, a_lect_conclusao as ano, round(avg(med_final),2) as media --max or avg?
@@ -72,7 +77,7 @@ where a_lect_conclusao is not null
 group by curso, a_lect_conclusao)
 select *
 from media_curso_ano t1
-where media = (select max(media) from media_curso_ano t2 where t2.ano = t1.ano)
+where media = (select max(media) from media_curso_ano t2 where t2.ano = t1.ano);
 
 /*
 Question 4 (second way - using left outer join on lower averages and filter for unmatched (aka highest))
@@ -87,7 +92,7 @@ select t1.*
 from media_curso_ano t1 left outer join media_curso_ano t2
 on t1.ano = t2.ano and t1.media < t2.media
 where t2.ano is null
-order by t1.ano
+order by t1.ano;
 /* Y*/
 with media_curso_ano as (
 select curso, a_lect_conclusao as ano, round(avg(med_final),2) as media --max or avg?
@@ -98,7 +103,7 @@ select t1.*
 from media_curso_ano t1 left outer join media_curso_ano t2
 on t1.ano = t2.ano and t1.media < t2.media
 where t2.ano is null
-order by t1.ano
+order by t1.ano;
 /* Z*/
 with media_curso_ano as (
 select curso, a_lect_conclusao as ano, round(avg(med_final),2) as media --max or avg?
@@ -109,21 +114,18 @@ select t1.*
 from media_curso_ano t1 left outer join media_curso_ano t2
 on t1.ano = t2.ano and t1.media < t2.media
 where t2.ano is null
-order by t1.ano
+order by t1.ano;
 
 /*
-Question 5 (B-tree)
+Question 5
 */
 /* X*/
+SELECT c.bi AS "Candidato (BI)" FROM xcands c WHERE c.resultado <> 'C' OR c.resultado <> 'E'; 
 /* Y*/
+SELECT c.bi AS "Candidato (BI)" FROM ycands c WHERE c.resultado <> 'C' OR c.resultado <> 'E'; 
 /* Z*/
+SELECT c.bi AS "Candidato (BI)" FROM zcands c WHERE c.resultado <> 'C' OR c.resultado <> 'E'; 
 
-/*
-Question 5 (Bitmap)
-*/
-/* X*/
-/* Y*/
-/* Z*/
 
 /*
 Question 6 (double negation)
