@@ -62,6 +62,11 @@ CREATE INDEX q1_lics ON zlics(sigla, codigo);
 CREATE INDEX q1_alus ON zalus(estado, a_lect_conclusao - a_lect_matricula);
 CREATE INDEX q1_lics ON zlics(sigla);
 */
+
+-- Question 2
+-- Reduces cost from 34 (both in X and Y) to 18
+create index q2_alus on zalus (curso, a_lect_matricula, bi);
+
 SET TIMING ON;
 SET AUTOTRACE TRACE EXPLAIN;
 SET AUTOTRACE ON EXPLAIN;
