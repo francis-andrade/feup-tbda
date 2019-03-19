@@ -4,11 +4,17 @@
 Question 1 
 */
 /* X*/
-SELECT a.numero, a.a_lect_conclusao - a.a_lect_matricula AS "NÃºmero de Anos Demorado" FROM xalus a JOIN xlics l  ON a.curso = l.codigo WHERE a.estado = 'C' AND a.a_lect_conclusao - a.a_lect_matricula < 5 AND l.sigla = 'EIC';
+SELECT a.numero, a.a_lect_conclusao - a.a_lect_matricula AS "NÃºmero de Anos Demorado" 
+FROM xalus a JOIN xlics l  ON a.curso = l.codigo 
+WHERE a.estado = 'C' AND a.a_lect_conclusao - a.a_lect_matricula < 5 AND l.sigla = 'EIC';
 /* Y*/
-SELECT a.numero, a.a_lect_conclusao - a.a_lect_matricula AS "NÃºmero de Anos Demorado" FROM yalus a JOIN ylics l  ON a.curso = l.codigo WHERE a.estado = 'C' AND a.a_lect_conclusao - a.a_lect_matricula < 5 AND l.sigla = 'EIC';
+SELECT a.numero, a.a_lect_conclusao - a.a_lect_matricula AS "NÃºmero de Anos Demorado" 
+FROM yalus a JOIN ylics l  ON a.curso = l.codigo 
+WHERE a.estado = 'C' AND a.a_lect_conclusao - a.a_lect_matricula < 5 AND l.sigla = 'EIC';
 /* Z*/
-SELECT a.numero, a.a_lect_conclusao - a.a_lect_matricula AS "NÃºmero de Anos Demorado" FROM zalus a JOIN zlics l  ON a.curso = l.codigo AND a.estado = 'C' AND a.a_lect_conclusao - a.a_lect_matricula < 5 AND l.sigla = 'EIC';
+SELECT a.numero, a.a_lect_conclusao - a.a_lect_matricula AS "NÃºmero de Anos Demorado" 
+FROM zalus a JOIN zlics l  ON a.curso = l.codigo 
+WHERE a.estado = 'C' AND a.a_lect_conclusao - a.a_lect_matricula < 5 AND l.sigla = 'EIC';
 
 /*
 Question 2
@@ -33,21 +39,45 @@ group by c.curso, c.ano_lectivo;
 Question 3 (constant subquery)
 */
 /* X*/
-SELECT c.ano_lectivo AS "Ano Letivo", c.bi AS "Aluno (BI)" FROM xcands c WHERE c.bi NOT IN(SELECT a.bi FROM xalus a); 
+SELECT c.ano_lectivo AS "Ano Letivo", COUNT(*) AS "Número de Alunos não Matriculados"
+FROM xcands c 
+WHERE (c.bi, c.curso, c.ano_lectivo) NOT IN(SELECT a.bi, a.curso, a.a_lect_matricula FROM xalus a)
+GROUP BY c.ano_lectivo
+ORDER BY c.ano_lectivo;
 /* Y*/
-SELECT c.ano_lectivo AS "Ano Letivo", c.bi AS "Aluno (BI)" FROM ycands c WHERE c.bi NOT IN(SELECT a.bi FROM yalus a); 
+SELECT c.ano_lectivo AS "Ano Letivo", COUNT(*) AS "Número de Alunos não Matriculados"
+FROM ycands c 
+WHERE (c.bi, c.curso, c.ano_lectivo) NOT IN(SELECT a.bi, a.curso, a.a_lect_matricula FROM yalus a)
+GROUP BY c.ano_lectivo
+ORDER BY c.ano_lectivo;
 /* Z*/
-SELECT c.ano_lectivo AS "Ano Letivo", c.bi AS "Aluno (BI)" FROM zcands c WHERE c.bi NOT IN(SELECT a.bi FROM zalus a); 
+SELECT c.ano_lectivo AS "Ano Letivo", COUNT(*) AS "Número de Alunos não Matriculados"
+FROM zcands c 
+WHERE (c.bi, c.curso, c.ano_lectivo) NOT IN(SELECT a.bi, a.curso, a.a_lect_matricula FROM zalus a)
+GROUP BY c.ano_lectivo
+ORDER BY c.ano_lectivo;
 
 /*
 Question 3 (variable subquery)
 */
 /* X*/
-SELECT c.ano_lectivo AS "Ano Letivo", c.bi AS "Aluno (BI)" FROM xcands c WHERE NOT EXISTS (SELECT * FROM xalus a WHERE a.bi = c.bi);
+SELECT c.ano_lectivo AS "Ano Letivo", COUNT(*) AS "Número de Alunos não Matriculados"
+FROM xcands c 
+WHERE NOT EXISTS (SELECT * FROM xalus a WHERE a.bi = c.bi AND a.curso = c.curso AND a.a_lect_matricula = c.ano_lectivo)
+GROUP BY c.ano_lectivo
+ORDER BY c.ano_lectivo;
 /* Y*/
-SELECT c.ano_lectivo AS "Ano Letivo", c.bi AS "Aluno (BI)" FROM ycands c WHERE NOT EXISTS (SELECT * FROM yalus a WHERE a.bi = c.bi);
+SELECT c.ano_lectivo AS "Ano Letivo", COUNT(*) AS "Número de Alunos não Matriculados"
+FROM ycands c 
+WHERE NOT EXISTS (SELECT * FROM yalus a WHERE a.bi = c.bi AND a.curso = c.curso AND a.a_lect_matricula = c.ano_lectivo)
+GROUP BY c.ano_lectivo
+ORDER BY c.ano_lectivo;
 /* Z*/
-SELECT c.ano_lectivo AS "Ano Letivo", c.bi AS "Aluno (BI)" FROM zcands c WHERE NOT EXISTS (SELECT * FROM zalus a WHERE a.bi = c.bi);
+SELECT c.ano_lectivo AS "Ano Letivo", COUNT(*) AS "Número de Alunos não Matriculados"
+FROM zcands c 
+WHERE NOT EXISTS (SELECT * FROM zalus a WHERE a.bi = c.bi AND a.curso = c.curso AND a.a_lect_matricula = c.ano_lectivo)
+GROUP BY c.ano_lectivo
+ORDER BY c.ano_lectivo;
 /*
 Question 4 (first way - using a subquery to select value equal to max)
 */
@@ -120,11 +150,17 @@ order by t1.ano;
 Question 5
 */
 /* X*/
-SELECT c.bi AS "Candidato (BI)" FROM xcands c WHERE c.resultado <> 'C' OR c.resultado <> 'E'; 
+SELECT COUNT(*)
+FROM xcands c 
+WHERE c.resultado <> 'C' AND c.resultado <> 'E'; 
 /* Y*/
-SELECT c.bi AS "Candidato (BI)" FROM ycands c WHERE c.resultado <> 'C' OR c.resultado <> 'E'; 
+SELECT COUNT(*)
+FROM ycands c 
+WHERE c.resultado <> 'C' AND c.resultado <> 'E'; 
 /* Z*/
-SELECT c.bi AS "Candidato (BI)" FROM zcands c WHERE c.resultado <> 'C' OR c.resultado <> 'E'; 
+SELECT COUNT(*)
+FROM zcands c 
+WHERE c.resultado <> 'C' AND c.resultado <> 'E'; 
 
 
 /*
