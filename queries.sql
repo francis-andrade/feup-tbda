@@ -4,15 +4,15 @@
 Question 1 
 */
 /* X*/
-SELECT a.numero, a.a_lect_conclusao - a.a_lect_matricula AS "NÃºmero de Anos Demorado" 
+SELECT a.numero AS "Aluno (BI)", a.a_lect_conclusao - a.a_lect_matricula AS "Anos Demorados" 
 FROM xalus a JOIN xlics l  ON a.curso = l.codigo 
 WHERE a.estado = 'C' AND a.a_lect_conclusao - a.a_lect_matricula < 5 AND l.sigla = 'EIC';
 /* Y*/
-SELECT a.numero, a.a_lect_conclusao - a.a_lect_matricula AS "NÃºmero de Anos Demorado" 
+SELECT a.numero AS "Aluno (BI)", a.a_lect_conclusao - a.a_lect_matricula AS "Anos Demorados" 
 FROM yalus a JOIN ylics l  ON a.curso = l.codigo 
 WHERE a.estado = 'C' AND a.a_lect_conclusao - a.a_lect_matricula < 5 AND l.sigla = 'EIC';
 /* Z*/
-SELECT a.numero, a.a_lect_conclusao - a.a_lect_matricula AS "NÃºmero de Anos Demorado" 
+SELECT a.numero AS "Aluno (BI)", a.a_lect_conclusao - a.a_lect_matricula AS "Anos Demorados" 
 FROM zalus a JOIN zlics l  ON a.curso = l.codigo 
 WHERE a.estado = 'C' AND a.a_lect_conclusao - a.a_lect_matricula < 5 AND l.sigla = 'EIC';
 
@@ -150,15 +150,15 @@ order by t1.ano;
 Question 5
 */
 /* X*/
-SELECT COUNT(*)
+SELECT COUNT(*) AS "Número de Candidatos != (C | E)"
 FROM xcands c 
 WHERE c.resultado <> 'C' AND c.resultado <> 'E'; 
 /* Y*/
-SELECT COUNT(*)
+SELECT COUNT(*) AS "Número de Candidatos != (C | E)"
 FROM ycands c 
 WHERE c.resultado <> 'C' AND c.resultado <> 'E'; 
 /* Z*/
-SELECT COUNT(*)
+SELECT COUNT(*) AS "Número de Candidatos != (C | E)"
 FROM zcands c 
 WHERE c.resultado <> 'C' AND c.resultado <> 'E'; 
 
@@ -176,7 +176,7 @@ select l.sigla, l.nome, c.ano_lectivo as ano
 from xlics l inner join xcands c
 on l.codigo = c.curso
 where c.resultado = 'C' and not exists (select 1 from aceites_nao_matriculados anm where anm.curso = c.curso and anm.ano = c.ano_lectivo)
-group by l.sigla, l.nome, c.ano_lectivo
+group by l.sigla, l.nome, c.ano_lectivo;
 /* Y*/
 with aceites_nao_matriculados as(
 select c.curso, c.ano_lectivo as ano
@@ -187,7 +187,7 @@ select l.sigla, l.nome, c.ano_lectivo as ano
 from ylics l inner join ycands c
 on l.codigo = c.curso
 where c.resultado = 'C' and not exists (select 1 from aceites_nao_matriculados anm where anm.curso = c.curso and anm.ano = c.ano_lectivo)
-group by l.sigla, l.nome, c.ano_lectivo
+group by l.sigla, l.nome, c.ano_lectivo;
 /* Z*/
 with aceites_nao_matriculados as(
 select c.curso, c.ano_lectivo as ano
@@ -198,7 +198,7 @@ select l.sigla, l.nome, c.ano_lectivo as ano
 from zlics l inner join zcands c
 on l.codigo = c.curso
 where c.resultado = 'C' and not exists (select 1 from aceites_nao_matriculados anm where anm.curso = c.curso and anm.ano = c.ano_lectivo)
-group by l.sigla, l.nome, c.ano_lectivo
+group by l.sigla, l.nome, c.ano_lectivo;
 
 /*
 Question 6 (counting)
@@ -209,18 +209,18 @@ from xcands c inner join xlics l
 on l.codigo = c.curso
 where c.resultado='C'
 group by l.sigla, l.nome, c.curso, c.ano_lectivo
-having count(*) = (select count(*) from xalus a where a.a_lect_matricula = c.ano_lectivo and a.curso = c.curso)
+having count(*) = (select count(*) from xalus a where a.a_lect_matricula = c.ano_lectivo and a.curso = c.curso);
 /* Y*/
 select l.sigla, l.nome, c.curso, c.ano_lectivo as ano
 from ycands c inner join ylics l
 on l.codigo = c.curso
 where c.resultado='C'
 group by l.sigla, l.nome, c.curso, c.ano_lectivo
-having count(*) = (select count(*) from yalus a where a.a_lect_matricula = c.ano_lectivo and a.curso = c.curso)
+having count(*) = (select count(*) from yalus a where a.a_lect_matricula = c.ano_lectivo and a.curso = c.curso);
 /* Z*/
 select l.sigla, l.nome, c.curso, c.ano_lectivo as ano
 from zcands c inner join zlics l
 on l.codigo = c.curso
 where c.resultado='C'
 group by l.sigla, l.nome, c.curso, c.ano_lectivo
-having count(*) = (select count(*) from zalus a where a.a_lect_matricula = c.ano_lectivo and a.curso = c.curso)
+having count(*) = (select count(*) from zalus a where a.a_lect_matricula = c.ano_lectivo and a.curso = c.curso);

@@ -75,10 +75,7 @@ CREATE UNIQUE INDEX q3_alus on zalus (bi, curso, a_lect_matricula);
 
 --Question 5
 -- Cost: 9, down from 17
--- CREATE INDEX q5_btree_cands ON zcands(resultado);
+CREATE INDEX q5_btree_cands ON zcands(resultado);
 -- Cost: 1, down from 17
-CREATE BITMAP INDEX g5_bitmap_cands ON zcands(resultado);
+-- CREATE BITMAP INDEX g5_bitmap_cands ON zcands(resultado);
 
-SET TIMING ON;
-SET AUTOTRACE TRACE EXPLAIN;
-SET AUTOTRACE ON EXPLAIN;
