@@ -79,3 +79,10 @@ CREATE INDEX q5_btree_cands ON zcands(resultado);
 -- Cost: 1, down from 17
 -- CREATE BITMAP INDEX g5_bitmap_cands ON zcands(resultado);
 
+--Question 6
+-- Considering already index from q2 that is also used, reduces cost from 39->24 (double negation) and 21->6 (counting)
+--curso and ano_lectivo tagging along so index can do a full scan on itself rather than needing to access main table
+-- also because for some reason resultado alone wasn't being used by optimizer
+-- inspiration: https://asktom.oracle.com/pls/apex/asktom.search?tag=select-columns-having-bitmap-index
+create bitmap index q6 on zcands (resultado, curso, ano_lectivo); 
+
