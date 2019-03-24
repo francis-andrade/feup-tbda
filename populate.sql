@@ -73,6 +73,11 @@ CREATE UNIQUE INDEX q2q3_alus on zalus (curso, a_lect_matricula, bi);
 CREATE UNIQUE INDEX q3_alus on zalus (bi, curso, a_lect_matricula);
 */
 
+-- Question 4
+-- Costs are cut +- in half (e.g., 10 to 5 in one of the strategies)
+-- justification is the same as question 6 index
+create bitmap index q4 on zalus (estado, curso, a_lect_conclusao, med_final);
+
 --Question 5
 -- Cost: 9, down from 17
 CREATE INDEX q5_btree_cands ON zcands(resultado);
