@@ -52,30 +52,19 @@ ALTER TABLE zalus ADD CONSTRAINT zalus_fk_cands FOREIGN KEY (bi, curso, a_lect_m
 -- Question 1
 --Cost 3 
 CREATE INDEX q1_alus ON zalus(estado, a_lect_conclusao - a_lect_matricula, curso);
-CREATE INDEX q1_lics ON zlics(codigo, sigla);
+CREATE UNIQUE INDEX q1_lics ON zlics(codigo, sigla);
 
-/* --Cost 3 
-CREATE INDEX q1_alus ON zalus(estado, a_lect_conclusao - a_lect_matricula, curso);
-CREATE INDEX q1_lics ON zlics(sigla, codigo);
-*/
-/* --Cost 5
-CREATE INDEX q1_alus ON zalus(estado, a_lect_conclusao - a_lect_matricula);
-CREATE INDEX q1_lics ON zlics(sigla);
-*/
+
 
 -- Question 2 / Question 3
 -- Reduces cost from 34 (both in X and Y) to 18
 -- Also works for Question 3. Cost Constant: 32 down from 37. Cost Variable: 19 down from 34
 CREATE UNIQUE INDEX q2q3_alus on zalus (curso, a_lect_matricula, bi);
 
--- Question 3
-/* -- Cost 29 for variable and 31 for constant. This index is necessary without it cost is higher, but the above index is superior
-CREATE UNIQUE INDEX q3_alus on zalus (bi, curso, a_lect_matricula);
-*/
 
 --Question 5
 -- Cost: 9, down from 17
 CREATE INDEX q5_btree_cands ON zcands(resultado);
 -- Cost: 1, down from 17
--- CREATE BITMAP INDEX g5_bitmap_cands ON zcands(resultado);
+--CREATE BITMAP INDEX g5_bitmap_cands ON zcands(resultado);
 
