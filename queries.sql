@@ -39,21 +39,21 @@ group by c.curso, c.ano_lectivo;
 Question 3 (constant subquery)
 */
 /* X*/
-SELECT c.ano_lectivo AS "Ano Letivo", COUNT(*) AS "Número de Alunos não Matriculados"
-FROM xcands c 
-WHERE (c.bi, c.curso, c.ano_lectivo) NOT IN(SELECT a.bi, a.curso, a.a_lect_matricula FROM xalus a)
+SELECT c.ano_lectivo AS "Ano Letivo", COUNT(c.bi) AS "Número de Alunos não Matriculados"
+FROM xcands c WHERE c.resultado = 'C'
+AND (c.bi, c.curso, c.ano_lectivo) NOT IN(SELECT a.bi, a.curso, a.a_lect_matricula FROM xalus a)
 GROUP BY c.ano_lectivo
 ORDER BY c.ano_lectivo;
 /* Y*/
-SELECT c.ano_lectivo AS "Ano Letivo", COUNT(*) AS "Número de Alunos não Matriculados"
-FROM ycands c 
-WHERE (c.bi, c.curso, c.ano_lectivo) NOT IN(SELECT a.bi, a.curso, a.a_lect_matricula FROM yalus a)
+SELECT c.ano_lectivo AS "Ano Letivo", COUNT(c.bi) AS "Número de Alunos não Matriculados"
+FROM ycands c WHERE c.resultado = 'C'
+AND (c.bi, c.curso, c.ano_lectivo) NOT IN(SELECT a.bi, a.curso, a.a_lect_matricula FROM yalus a)
 GROUP BY c.ano_lectivo
 ORDER BY c.ano_lectivo;
 /* Z*/
 SELECT c.ano_lectivo AS "Ano Letivo", COUNT(*) AS "Número de Alunos não Matriculados"
-FROM zcands c 
-WHERE (c.bi, c.curso, c.ano_lectivo) NOT IN(SELECT a.bi, a.curso, a.a_lect_matricula FROM zalus a)
+FROM zcands c WHERE c.resultado = 'C'
+AND (c.bi, c.curso, c.ano_lectivo) NOT IN(SELECT a.bi, a.curso, a.a_lect_matricula FROM zalus a)
 GROUP BY c.ano_lectivo
 ORDER BY c.ano_lectivo;
 
@@ -61,23 +61,24 @@ ORDER BY c.ano_lectivo;
 Question 3 (variable subquery)
 */
 /* X*/
-SELECT c.ano_lectivo AS "Ano Letivo", COUNT(*) AS "Número de Alunos não Matriculados"
-FROM xcands c 
-WHERE NOT EXISTS (SELECT * FROM xalus a WHERE a.bi = c.bi AND a.curso = c.curso AND a.a_lect_matricula = c.ano_lectivo)
+SELECT c.ano_lectivo AS "Ano Letivo", COUNT(c.bi) AS "Número de Alunos não Matriculados"
+FROM xcands c WHERE c.resultado = 'C'
+AND NOT EXISTS (SELECT * FROM xalus a WHERE a.bi = c.bi AND a.curso = c.curso AND a.a_lect_matricula = c.ano_lectivo)
 GROUP BY c.ano_lectivo
 ORDER BY c.ano_lectivo;
 /* Y*/
-SELECT c.ano_lectivo AS "Ano Letivo", COUNT(*) AS "Número de Alunos não Matriculados"
-FROM ycands c 
-WHERE NOT EXISTS (SELECT * FROM yalus a WHERE a.bi = c.bi AND a.curso = c.curso AND a.a_lect_matricula = c.ano_lectivo)
+SELECT c.ano_lectivo AS "Ano Letivo", COUNT(c.bi) AS "Número de Alunos não Matriculados"
+FROM ycands c WHERE c.resultado = 'C'
+AND NOT EXISTS (SELECT * FROM yalus a WHERE a.bi = c.bi AND a.curso = c.curso AND a.a_lect_matricula = c.ano_lectivo)
 GROUP BY c.ano_lectivo
 ORDER BY c.ano_lectivo;
 /* Z*/
-SELECT c.ano_lectivo AS "Ano Letivo", COUNT(*) AS "Número de Alunos não Matriculados"
-FROM zcands c 
-WHERE NOT EXISTS (SELECT * FROM zalus a WHERE a.bi = c.bi AND a.curso = c.curso AND a.a_lect_matricula = c.ano_lectivo)
+SELECT c.ano_lectivo AS "Ano Letivo", COUNT(c.bi) AS "Número de Alunos não Matriculados"
+FROM zcands c WHERE c.resultado = 'C'
+AND NOT EXISTS (SELECT * FROM zalus a WHERE a.bi = c.bi AND a.curso = c.curso AND a.a_lect_matricula = c.ano_lectivo)
 GROUP BY c.ano_lectivo
 ORDER BY c.ano_lectivo;
+
 /*
 Question 4 (first way - using a subquery to select value equal to max)
 */
@@ -150,15 +151,15 @@ order by t1.ano;
 Question 5
 */
 /* X*/
-SELECT COUNT(*) AS "Número de Candidatos != (C | E)"
+SELECT COUNT(DISTINCT c.bi) AS "Número de Candidatos != (C | E)"
 FROM xcands c 
 WHERE c.resultado <> 'C' AND c.resultado <> 'E'; 
 /* Y*/
-SELECT COUNT(*) AS "Número de Candidatos != (C | E)"
+SELECT COUNT(DISTINCT c.bi) AS "Número de Candidatos != (C | E)"
 FROM ycands c 
 WHERE c.resultado <> 'C' AND c.resultado <> 'E'; 
 /* Z*/
-SELECT COUNT(*) AS "Número de Candidatos != (C | E)"
+SELECT COUNT(c.bi) AS "Número de Candidatos != (C | E)"
 FROM zcands c 
 WHERE c.resultado <> 'C' AND c.resultado <> 'E'; 
 
