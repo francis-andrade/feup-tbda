@@ -70,3 +70,53 @@ create table partido of partido_t
 create table lista of lista_t;
 
 create table votacao of votacao_t;
+
+-- populate database
+
+insert into partido (sigla, designacao)
+select *
+from gtd7.partidos;
+
+insert into distrito (codigo, nome, regiao, participacao)
+select d.*, participacao_t(p.inscritos, p.votantes, p.abstencoes, p.brancos, p.nulos)
+from gtd7.distritos d 
+inner join gtd7.participacoes p on d.codigo = p.distrito;
+
+insert into concelho (codigo, nome, distrito)
+select c.codigo, c.nome, ref(d)
+from gtd7.concelhos c 
+inner join distrito d on c.distrito = d.codigo;
+
+insert into freguesia (codigo, nome, concelho)
+select f.codigo, f.nome, ref(c)
+from gtd7.freguesias f
+inner join concelho c on f.concelho = c.codigo;
+
+insert into lista (distrito, partido, mandatos)
+select ref(d), ref(p), l.mandatos
+from distrito d
+inner join gtd7.listas l on d.codigo = l.distrito
+inner join partido p on l.partido = p.sigla;
+
+insert into votacao (freguesia, partido, votos)
+select ref(f), ref(p), v.votos
+from freguesia f
+inner join gtd7.votacoes v on f.codigo = v.freguesia
+inner join partido p on v.partido = p.sigla;
+
+-- atualizacoes (devido a referencias circulares)
+update distrito d
+set d.concelhos = cast(multiset(select ref(c) from concelho c where c.distrito.codigo = d.codigo) as concelho_tab_t),
+d.listas = cast(multiset(select ref(l) from lista l where l.distrito.codigo = d.codigo) as lista_tab_t);
+
+update partido p
+set p.votacoes = cast(multiset(select ref(v) from votacao v where v.partido.sigla = p.sigla) as votacao_tab_t),
+p.listas = cast(multiset(select ref(l) from lista l where l.partido.sigla = p.sigla) as lista_tab_t);
+
+update concelho c
+set c.freguesias = cast(multiset(select ref(f) from freguesia f where f.concelho.codigo = c.codigo) as freguesia_tab_t);
+
+-- this one may take a bit (more than 4k parishes (freguesia) to process)
+update freguesia f
+set f.votacoes = cast(multiset(select ref(v) from votacao v where v.freguesia.codigo = f.codigo) as votacao_tab_t);
+
