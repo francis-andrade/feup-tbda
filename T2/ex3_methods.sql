@@ -1,4 +1,3 @@
---3)
 ----------------------------------
 --DROP----------------------------
 ----------------------------------
@@ -122,12 +121,11 @@ CREATE OR REPLACE TYPE BODY partido_t AS
     END total_votos;
     
    MEMBER FUNCTION total_mandatos RETURN NUMBER IS
-    ret_variable NUMBER;
-    BEGIN
+   ret_variable NUMBER;
+   BEGIN
         SELECT NVL(SUM(value(l).mandatos), 0) INTO ret_variable FROM table(SELF.listas) l;
         RETURN ret_variable;
-    END total_mandatos;
-    
+   END total_mandatos;
 END;
 /
 
