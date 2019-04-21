@@ -1,8 +1,9 @@
 -- type creation
 create or replace type zona_t as object(
     codigo number(6),
-    nome varchar2(50)
-) not final;
+    nome varchar2(50),
+    NOT INSTANTIABLE MEMBER FUNCTION votos_partido(sigla_partido VARCHAR2) RETURN NUMBER
+) not instantiable not final;
 /
 create or replace type participacao_t as object(
     inscritos number(10),
@@ -14,15 +15,18 @@ create or replace type participacao_t as object(
 /
 create or replace type distrito_t under zona_t (
     regiao varchar2(1),
-    participacao participacao_t
+    participacao participacao_t,
+    OVERRIDING MEMBER FUNCTION votos_partido(sigla_partido VARCHAR2) RETURN NUMBER
 );
 /
 create or replace type concelho_t under zona_t (
-    distrito ref distrito_t
+    distrito ref distrito_t,
+    OVERRIDING MEMBER FUNCTION votos_partido(sigla_partido VARCHAR2) RETURN NUMBER
 );
 /
 create or replace type freguesia_t under zona_t (
-    concelho ref concelho_t
+    concelho ref concelho_t,
+    OVERRIDING MEMBER FUNCTION votos_partido(sigla_partido VARCHAR2) RETURN NUMBER
 );
 /
 create or replace type partido_t as object (
@@ -126,4 +130,3 @@ set c.freguesias = cast(multiset(select ref(f) from freguesia f where f.concelho
 -- this one may take a bit (more than 4k parishes (freguesia) to process)
 update freguesia f
 set f.votacoes = cast(multiset(select ref(v) from votacao v where v.freguesia.codigo = f.codigo) as votacao_tab_t);
-
