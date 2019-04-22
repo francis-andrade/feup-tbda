@@ -9,6 +9,7 @@ ALTER TYPE distrito_t DROP MEMBER FUNCTION ratio_mandatos_partido_vencedor RETUR
 
 ALTER TYPE partido_t DROP MEMBER FUNCTION total_votos RETURN NUMBER CASCADE;
 ALTER TYPE partido_t DROP MEMBER FUNCTION total_mandatos RETURN NUMBER CASCADE;
+ALTER TYPE partido_t DROP MEMBER FUNCTION best_ratio_district RETURN best_ratio_ret_t CASCADE;
 ----------------------------------
 --zona-----------------------
 ----------------------------------
@@ -132,6 +133,13 @@ END;
 ALTER TYPE partido_t ADD MEMBER FUNCTION total_votos RETURN NUMBER CASCADE;
 ALTER TYPE partido_t ADD MEMBER FUNCTION total_mandatos RETURN NUMBER CASCADE;
 /
+CREATE OR REPLACE TYPE best_ratio_ret_t AS OBJECT(
+    ratio NUMBER,
+    dist REF distrito_t
+)
+/
+ALTER TYPE partido_t ADD MEMBER FUNCTION best_ratio_district RETURN best_ratio_ret_t CASCADE;
+/
 CREATE OR REPLACE TYPE BODY partido_t AS
     MEMBER FUNCTION total_votos RETURN NUMBER IS
     ret_variable NUMBER;
@@ -146,5 +154,16 @@ CREATE OR REPLACE TYPE BODY partido_t AS
         SELECT NVL(SUM(value(l).mandatos), 0) INTO ret_variable FROM table(SELF.listas) l;
         RETURN ret_variable;
    END total_mandatos;
+   
+   MEMBER FUNCTION best_ratio_district RETURN best_ratio_ret_t IS
+   ret_variable best_ratio_ret_t;
+
+   BEGIN
+       ret_variable := best_ratio_ret_t(NULL, NULL);
+       SELECT tmp.refr, tmp.ratio INTO ret_variable.dist, ret_variable.ratio 
+       FROM
+       (SELECT  REF(d) AS refr, d.votos_partido(SELF.sigla) / d.total_votos() AS ratio FROM distrito d ORDER BY ratio DESC FETCH FIRST ROW ONLY)tmp;
+       RETURN ret_variable;
+   END best_ratio_district;
 END;
 /
