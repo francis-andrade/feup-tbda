@@ -37,4 +37,48 @@ WHERE NOT EXISTS
         NOT IN (SELECT value(l).distrito.codigo FROM table(p.listas) l) 
         OR d.codigo IN (SELECT value(l).distrito.codigo FROM table(p.listas) l WHERE value(l).mandatos = 0)
     ); 
-    
+-------------------------------------------------------------------
+--g1)-Partido Vencedor por Distrito--------------------------------
+-------------------------------------------------------------------
+SELECT d.nome, d.partido_vencedor().sigla FROM distrito d ORDER BY d.nome;
+-------------------------------------------------------------------
+--g21)--Freguesia onde houve maioria absoluta----------------------
+-------------------------------------------------------------------
+SELECT freg.nome AS "Freguesia", freg.partido_vencedor AS "Partido Vencedor", ROUND(100*freg.ratio, 1) AS "Perc. Votos Partido Vencedor"
+FROM 
+(SELECT f.nome AS nome, f.partido_vencedor().sigla AS partido_vencedor, f.ratio_votos_partido_vencedor() AS ratio FROM freguesia f) freg
+WHERE freg.ratio > 0.5
+ORDER BY freg.nome;
+-------------------------------------------------------------------
+--g22)--Concelho onde houve maioria absoluta-----------------------
+-------------------------------------------------------------------
+SELECT concl.nome AS "Concelho", concl.partido_vencedor AS "Partido Vencedor", ROUND(100*concl.ratio, 1) AS "Perc. Votos Partido Vencedor"
+FROM 
+(SELECT c.nome AS nome, c.partido_vencedor().sigla AS partido_vencedor, c.ratio_votos_partido_vencedor() AS ratio FROM concelho c) concl
+WHERE concl.ratio > 0.5
+ORDER BY concl.nome;
+-------------------------------------------------------------------
+--g23)--Distrito onde houve maioria absoluta-----------------------
+-------------------------------------------------------------------
+SELECT dist.nome AS "Distrito", dist.partido_vencedor AS "Partido Vencedor", ROUND(100*dist.ratio, 1) AS "Perc. Votos Partido Vencedor"
+FROM 
+(SELECT d.nome AS nome, d.partido_vencedor().sigla AS partido_vencedor, d.ratio_votos_partido_vencedor() AS ratio FROM distrito d) dist
+WHERE dist.ratio > 0.5
+ORDER BY dist.nome;
+-------------------------------------------------------------------
+--g3)--Distrito onde houve maioria absoluta por mandatos----------
+-------------------------------------------------------------------
+SELECT dist.nome AS "Distrito", dist.partido_vencedor AS "Partido Vencedor", ROUND(100*dist.ratio, 1) AS "Perc. Mandatos Partido Vencedor"
+FROM 
+(SELECT d.nome AS nome, d.partido_vencedor().sigla AS partido_vencedor, d.ratio_mandatos_partido_vencedor() AS ratio FROM distrito d) dist
+WHERE dist.ratio > 0.5
+ORDER BY dist.nome;
+-------------------------------------------------------------------
+--g43)--Distrito com o melhor rácio por partido--------------------
+-------------------------------------------------------------------
+/*
+SELECT p.nome AS "Partido", d.nome AS "DISTRITO" 
+FROM (
+    SELECT d.nome AS distrito_nome, p.sigla AS partido_sigla, d.votos_partido(p.sigla)/tv AS ratio   
+partido p, distrito d;
+*/

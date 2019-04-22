@@ -15,6 +15,11 @@ WITH zonas_partidos AS (SELECT f.codigo AS codigo, f.nome AS nome, v.votos AS vo
 SELECT tmp.nome, tmp.partido, tmp.votos FROM zonas_partidos tmp WHERE tmp.partido = 'PS' ORDER BY tmp.nome;
 --
 SELECT f.nome, f.votos_partido('PS') FROM freguesia f ORDER BY f.nome;
+-- ratio de votos partido vencedor
+WITH zonas_partidos AS (SELECT f.codigo AS codigo, f.nome AS nome, v.votos AS votos, v.partido AS partido FROM GTD7.freguesias f,  GTD7.votacoes v WHERE f.codigo = v.freguesia )
+SELECT tmp.nome, ROUND(MAX(tmp.votos)/SUM(tmp.votos), 3) FROM zonas_partidos tmp GROUP BY tmp.nome ORDER BY tmp.nome;
+--
+SELECT f.nome, ROUND(f.ratio_votos_partido_vencedor(), 3) FROM freguesia f ORDER BY f.nome;
 
 
 ----------------------------------

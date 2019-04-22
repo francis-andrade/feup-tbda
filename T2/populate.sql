@@ -2,7 +2,8 @@
 create or replace type zona_t as object(
     codigo number(6),
     nome varchar2(50),
-    NOT INSTANTIABLE MEMBER FUNCTION votos_partido(sigla_partido VARCHAR2) RETURN NUMBER
+    not instantiable member function votos_partido(sigla_partido varchar2) return number,
+    not instantiable member function total_votos return number
 ) not instantiable not final;
 /
 create or replace type participacao_t as object(
@@ -16,17 +17,20 @@ create or replace type participacao_t as object(
 create or replace type distrito_t under zona_t (
     regiao varchar2(1),
     participacao participacao_t,
-    OVERRIDING MEMBER FUNCTION votos_partido(sigla_partido VARCHAR2) RETURN NUMBER
+    overriding member function votos_partido(sigla_partido varchar2) return number,
+    overriding member function total_votos return number
 );
 /
 create or replace type concelho_t under zona_t (
     distrito ref distrito_t,
-    OVERRIDING MEMBER FUNCTION votos_partido(sigla_partido VARCHAR2) RETURN NUMBER
+    overriding member function  votos_partido(sigla_partido varchar2) return number,
+    overriding member function total_votos return number
 );
 /
 create or replace type freguesia_t under zona_t (
     concelho ref concelho_t,
-    OVERRIDING MEMBER FUNCTION votos_partido(sigla_partido VARCHAR2) RETURN NUMBER
+    overriding member function votos_partido(sigla_partido varchar2) return number,
+    overriding member function total_votos return number
 );
 /
 create or replace type partido_t as object (

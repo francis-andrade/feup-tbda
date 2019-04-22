@@ -46,3 +46,49 @@ where sigla not in (
        select partido, distrito
        from GTD7.listas
        where mandatos>0));
+-------------------------------------------------------------------
+--g1)-Partido Vencedor em cada distrito----------------------------
+-------------------------------------------------------------------
+WITH zonas_partidos AS (SELECT d.codigo AS codigo, SUM(v.votos) AS votos, v.partido AS partido FROM GTD7.distritos d, GTD7.concelhos c, GTD7.freguesias f,  GTD7.votacoes v WHERE d.codigo = c.distrito AND c.codigo = f.concelho AND f.codigo = v.freguesia GROUP BY d.codigo, v.partido)
+SELECT d.nome, tmp.partido, tmp.votos FROM zonas_partidos tmp, GTD7.distritos d WHERE d.codigo = tmp.codigo AND NOT EXISTS(SELECT * FROM zonas_partidos tmp2 WHERE tmp2.codigo = tmp.codigo AND tmp2.partido != tmp.partido AND tmp.votos < tmp2.votos) ORDER BY d.nome;
+-------------------------------------------------------------------
+--g21)--Freguesia onde houve maioria absoluta----------------------
+-------------------------------------------------------------------
+WITH zonas_partidos AS (SELECT f.codigo AS codigo, f.nome AS nome, v.votos AS votos, v.partido AS partido FROM GTD7.freguesias f,  GTD7.votacoes v WHERE f.codigo = v.freguesia )
+SELECT tmp.nome, tmp.partido, ROUND(100*(tmp.votos / (total.votos+0.00001)), 1) FROM 
+zonas_partidos tmp,
+(SELECT z.codigo AS codigo, SUM(z.votos) AS votos FROM zonas_partidos z GROUP BY z.codigo) total 
+WHERE tmp.codigo = total.codigo AND
+NOT EXISTS(
+    SELECT * FROM zonas_partidos tmp2 WHERE tmp2.codigo = tmp.codigo AND tmp2.partido != tmp.partido AND tmp.votos < tmp2.votos) 
+AND tmp.votos / (total.votos+0.00001) > 0.5
+ORDER BY tmp.nome;
+-------------------------------------------------------------------
+--g22)--Concelho onde houve maioria absoluta-----------------------
+-------------------------------------------------------------------
+WITH zonas_partidos AS (SELECT c.codigo AS codigo, SUM(v.votos) AS votos, v.partido AS partido FROM GTD7.concelhos c, GTD7.freguesias f,  GTD7.votacoes v WHERE c.codigo = f.concelho AND f.codigo = v.freguesia GROUP BY c.codigo, v.partido)
+SELECT c.nome, tmp.partido, ROUND(100*(tmp.votos / (total.votos+0.00001)), 1)
+FROM zonas_partidos tmp, 
+GTD7.concelhos c,
+(SELECT z.codigo AS codigo, SUM(z.votos) AS votos FROM zonas_partidos z GROUP BY z.codigo) total
+WHERE tmp.codigo = total.codigo AND
+c.codigo = tmp.codigo 
+AND NOT EXISTS(SELECT * FROM zonas_partidos tmp2 WHERE tmp2.codigo = tmp.codigo AND tmp2.partido != tmp.partido AND tmp.votos < tmp2.votos)
+AND tmp.votos / (total.votos+0.00001) > 0.5
+ORDER BY c.nome;
+-------------------------------------------------------------------
+--g23)--Distrito onde houve maioria absoluta-----------------------
+-------------------------------------------------------------------
+WITH zonas_partidos AS (SELECT d.codigo AS codigo, SUM(v.votos) AS votos, v.partido AS partido FROM GTD7.distritos d, GTD7.concelhos c, GTD7.freguesias f,  GTD7.votacoes v WHERE d.codigo = c.distrito AND c.codigo = f.concelho AND f.codigo = v.freguesia GROUP BY d.codigo, v.partido)
+SELECT d.nome, tmp.partido, ROUND(100*(tmp.votos / (total.votos+0.00001)), 1)
+FROM zonas_partidos tmp, 
+GTD7.distritos d,
+(SELECT z.codigo AS codigo, SUM(z.votos) AS votos FROM zonas_partidos z GROUP BY z.codigo) total
+WHERE tmp.codigo = total.codigo AND
+d.codigo = tmp.codigo 
+AND NOT EXISTS(SELECT * FROM zonas_partidos tmp2 WHERE tmp2.codigo = tmp.codigo AND tmp2.partido != tmp.partido AND tmp.votos < tmp2.votos)
+AND tmp.votos / (total.votos+0.00001) > 0.5
+ORDER BY d.nome;
+-------------------------------------------------------------------
+--g3)--Distrito onde houve maioria absoluta por mandatos----------
+-------------------------------------------------------------------
