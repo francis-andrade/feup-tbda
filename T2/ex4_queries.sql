@@ -74,11 +74,9 @@ FROM
 WHERE dist.ratio > 0.5
 ORDER BY dist.nome;
 -------------------------------------------------------------------
---g43)--Distrito com o melhor rácio por partido--------------------
+--g4)--Distrito com o melhor rácio por partido--------------------
 -------------------------------------------------------------------
-SELECT  REF(d) AS refr, d.votos_partido(p.sigla) / d.total_votos() AS ratio FROM distrito d, partido p WHERE p.sigla = 'PS'  ORDER BY ratio DESC FETCH FIRST ROW ONLY;
-/
-SELECT tmp.sigla AS "Partido", tmp.ret.distrito.nome AS "Melhor distrito", 
-ROUND(100*tmp.ret.ratio, 1) AS "Perc. Votos"  
+SELECT tmp.sigla AS "Partido", tmp.ret.dist.nome AS "Melhor distrito", ROUND(100*tmp.ret.ratio, 1) AS "Perc. Votos"  
 FROM 
-(SELECT p.sigla AS sigla, p.best_ratio_district() AS ret FROM  partido p) tmp;
+(SELECT p.sigla AS sigla, p.best_ratio_district() AS ret FROM  partido p) tmp 
+ORDER BY tmp.sigla;
