@@ -63,6 +63,17 @@ NOT EXISTS(
     SELECT * FROM zonas_partidos tmp2 WHERE tmp2.codigo = tmp.codigo AND tmp2.partido != tmp.partido AND tmp.votos < tmp2.votos) 
 AND tmp.votos / (total.votos+0.00001) > 0.5
 ORDER BY tmp.nome;
+
+SELECT COUNT(*) FROM (
+WITH zonas_partidos AS (SELECT f.codigo AS codigo, f.nome AS nome, v.votos AS votos, v.partido AS partido FROM GTD7.freguesias f,  GTD7.votacoes v WHERE f.codigo = v.freguesia )
+SELECT tmp.nome, tmp.partido, ROUND(100*(tmp.votos / (total.votos+0.00001)), 1) FROM 
+zonas_partidos tmp,
+(SELECT z.codigo AS codigo, SUM(z.votos) AS votos FROM zonas_partidos z GROUP BY z.codigo) total 
+WHERE tmp.codigo = total.codigo AND
+NOT EXISTS(
+    SELECT * FROM zonas_partidos tmp2 WHERE tmp2.codigo = tmp.codigo AND tmp2.partido != tmp.partido AND tmp.votos < tmp2.votos) 
+AND tmp.votos / (total.votos+0.00001) > 0.5
+ORDER BY tmp.nome);
 -------------------------------------------------------------------
 --g22)--Concelho onde houve maioria absoluta-----------------------
 -------------------------------------------------------------------

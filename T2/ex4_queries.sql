@@ -40,7 +40,7 @@ WHERE NOT EXISTS
 -------------------------------------------------------------------
 --g1)-Partido Vencedor por Distrito--------------------------------
 -------------------------------------------------------------------
-SELECT d.nome, d.partido_vencedor().sigla FROM distrito d ORDER BY d.nome;
+SELECT d.nome, d.partido_vencedor().sigla AS "Partido Vencedor" FROM distrito d ORDER BY d.nome;
 -------------------------------------------------------------------
 --g21)--Freguesia onde houve maioria absoluta----------------------
 -------------------------------------------------------------------
@@ -49,6 +49,16 @@ FROM
 (SELECT f.nome AS nome, f.partido_vencedor().sigla AS partido_vencedor, f.ratio_votos_partido_vencedor() AS ratio FROM freguesia f) freg
 WHERE freg.ratio > 0.5
 ORDER BY freg.nome;
+/*
+SELECT f.nome AS "Freguesia", f.partido_vencedor().sigla AS "Partido Vencedor", ROUND(100*f.ratio_votos_partido_vencedor(),1) AS "Perc. Votos Partido Vencedor" FROM freguesia f 
+WHERE"Perc. Votos Partido Vencedor" > 50
+ORDER BY "Freguesia;
+*/
+SELECT COUNT(*) FROM(
+SELECT freg.nome AS "Freguesia", freg.partido_vencedor AS "Partido Vencedor", ROUND(100*freg.ratio, 1) AS "Perc. Votos Partido Vencedor"
+FROM 
+(SELECT f.nome AS nome, f.partido_vencedor().sigla AS partido_vencedor, f.ratio_votos_partido_vencedor() AS ratio FROM freguesia f) freg
+WHERE freg.ratio > 0.5);
 -------------------------------------------------------------------
 --g22)--Concelho onde houve maioria absoluta-----------------------
 -------------------------------------------------------------------
@@ -80,3 +90,11 @@ SELECT tmp.sigla AS "Partido", tmp.ret.dist.nome AS "Melhor distrito", ROUND(100
 FROM 
 (SELECT p.sigla AS sigla, p.best_ratio_district() AS ret FROM  partido p) tmp 
 ORDER BY tmp.sigla;
+-----------------------------------------------------------------------------
+--g5)--Percentagem de votos em cada partido ordenado pelo número de votos----
+-----------------------------------------------------------------------------
+SELECT p.sigla AS "Partido", ROUND(100*p.total_votos()/tv.total_votos, 1) AS "Perc. Votos"
+FROM
+partido p,
+(SELECT SUM(d.participacao.votantes) AS total_votos FROM distrito d) tv
+ORDER BY value(p) DESC;

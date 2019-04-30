@@ -7,9 +7,10 @@ ALTER TYPE zona_t DROP MEMBER FUNCTION ratio_votos_partido_vencedor RETURN NUMBE
 ALTER TYPE distrito_t DROP MEMBER FUNCTION integrity RETURN NUMBER CASCADE;
 ALTER TYPE distrito_t DROP MEMBER FUNCTION ratio_mandatos_partido_vencedor RETURN NUMBER CASCADE;
 
-ALTER TYPE partido_t DROP MEMBER FUNCTION total_votos RETURN NUMBER CASCADE;
+ALTER TYPE partido_t DROP MAP MEMBER FUNCTION total_votos RETURN NUMBER CASCADE;
 ALTER TYPE partido_t DROP MEMBER FUNCTION total_mandatos RETURN NUMBER CASCADE;
 ALTER TYPE partido_t DROP MEMBER FUNCTION best_ratio_district RETURN best_ratio_ret_t CASCADE;
+
 ----------------------------------
 --zona-----------------------
 ----------------------------------
@@ -46,14 +47,14 @@ CREATE OR REPLACE TYPE BODY freguesia_t AS
     OVERRIDING MEMBER FUNCTION total_votos RETURN NUMBER IS
     ret_variable NUMBER;
     BEGIN
-        SELECT SUM(value(v).votos) INTO ret_variable FROM table(SELF.votacoes) v;
+        SELECT SUM(value(v).votos) INTO ret_variable FROM TABLE(SELF.votacoes) v;
         RETURN ret_variable;
     END total_votos;
     
     OVERRIDING MEMBER FUNCTION votos_partido(sigla_partido VARCHAR2) RETURN NUMBER IS
     ret_variable NUMBER;
     BEGIN
-        SELECT NVL(SUM(value(v).votos), 0) INTO ret_variable FROM table(SELF.votacoes) v WHERE value(v).partido.sigla = sigla_partido;
+        SELECT NVL(SUM(value(v).votos), 0) INTO ret_variable FROM TABLE(SELF.votacoes) v WHERE value(v).partido.sigla = sigla_partido;
         RETURN ret_variable;
     END votos_partido;
 END;
@@ -67,17 +68,16 @@ CREATE OR REPLACE TYPE BODY concelho_t AS
     OVERRIDING MEMBER FUNCTION total_votos RETURN NUMBER IS
     ret_variable NUMBER;
     BEGIN
-        SELECT SUM(value(v).votos) INTO ret_variable FROM table(SELF.freguesias) f, table(value(f).votacoes) v;
+        SELECT SUM(value(v).votos) INTO ret_variable FROM TABLE(SELF.freguesias) f, TABLE(value(f).votacoes) v;
         RETURN ret_variable;
     END total_votos;
     
     OVERRIDING MEMBER FUNCTION votos_partido(sigla_partido VARCHAR2) RETURN NUMBER IS
     ret_variable NUMBER;
     BEGIN
-        SELECT NVL(SUM(value(v).votos), 0) INTO ret_variable FROM table(SELF.freguesias) f, table(value(f).votacoes) v WHERE value(v).partido.sigla = sigla_partido;
+        SELECT NVL(SUM(value(v).votos), 0) INTO ret_variable FROM TABLE(SELF.freguesias) f, TABLE(value(f).votacoes) v WHERE value(v).partido.sigla = sigla_partido;
         RETURN ret_variable;
     END votos_partido;
-
 END;
 /
 
@@ -91,14 +91,14 @@ CREATE OR REPLACE TYPE BODY distrito_t AS
     OVERRIDING MEMBER FUNCTION total_votos RETURN NUMBER IS
     ret_variable NUMBER;
     BEGIN
-        SELECT SUM(value(v).votos) INTO ret_variable FROM table(SELF.concelhos) c, table(value(c).freguesias) f, table(value(f).votacoes) v;
+        SELECT SUM(value(v).votos) INTO ret_variable FROM TABLE(SELF.concelhos) c, TABLE(value(c).freguesias) f, TABLE(value(f).votacoes) v;
         RETURN ret_variable;
     END total_votos;
     
     OVERRIDING MEMBER FUNCTION votos_partido(sigla_partido VARCHAR2) RETURN NUMBER IS
     ret_variable NUMBER;
     BEGIN
-        SELECT NVL(SUM(value(v).votos), 0) INTO ret_variable FROM table(SELF.concelhos) c, table(value(c).freguesias) f, table(value(f).votacoes) v WHERE value(v).partido.sigla = sigla_partido;
+        SELECT NVL(SUM(value(v).votos), 0) INTO ret_variable FROM TABLE(SELF.concelhos) c, TABLE(value(c).freguesias) f, TABLE(value(f).votacoes) v WHERE value(v).partido.sigla = sigla_partido;
         RETURN ret_variable;
     END votos_partido;
     
@@ -116,11 +116,11 @@ CREATE OR REPLACE TYPE BODY distrito_t AS
     MEMBER FUNCTION ratio_mandatos_partido_vencedor RETURN NUMBER IS
     ret_variable NUMBER; tm NUMBER;
     BEGIN
-        SELECT SUM(value(l).mandatos) INTO tm FROM table(SELF.listas) l;
+        SELECT SUM(value(l).mandatos) INTO tm FROM TABLE(SELF.listas) l;
         IF tm = 0 THEN
             RETURN 0;
         ELSE
-            SELECT MAX(value(l).mandatos / tm) INTO ret_variable FROM partido p JOIN table(SELF.listas) l ON p.sigla = value(l).partido.sigla;
+            SELECT MAX(value(l).mandatos / tm) INTO ret_variable FROM partido p JOIN TABLE(SELF.listas) l ON p.sigla = value(l).partido.sigla;
         END IF;
     RETURN ret_variable;
     END ratio_mandatos_partido_vencedor;
@@ -130,7 +130,7 @@ END;
 ----------------------------------
 --partido-------------------------
 ----------------------------------
-ALTER TYPE partido_t ADD MEMBER FUNCTION total_votos RETURN NUMBER CASCADE;
+ALTER TYPE partido_t ADD MAP MEMBER FUNCTION total_votos RETURN NUMBER CASCADE;
 ALTER TYPE partido_t ADD MEMBER FUNCTION total_mandatos RETURN NUMBER CASCADE;
 /
 CREATE OR REPLACE TYPE best_ratio_ret_t AS OBJECT(
@@ -141,17 +141,17 @@ CREATE OR REPLACE TYPE best_ratio_ret_t AS OBJECT(
 ALTER TYPE partido_t ADD MEMBER FUNCTION best_ratio_district RETURN best_ratio_ret_t CASCADE;
 /
 CREATE OR REPLACE TYPE BODY partido_t AS
-    MEMBER FUNCTION total_votos RETURN NUMBER IS
+    MAP MEMBER FUNCTION total_votos RETURN NUMBER IS
     ret_variable NUMBER;
     BEGIN
-        SELECT NVL(SUM(value(v).votos), 0) INTO ret_variable FROM table(SELF.votacoes) v;
+        SELECT NVL(SUM(value(v).votos), 0) INTO ret_variable FROM TABLE(SELF.votacoes) v;
         RETURN ret_variable;
     END total_votos;
     
    MEMBER FUNCTION total_mandatos RETURN NUMBER IS
    ret_variable NUMBER;
    BEGIN
-        SELECT NVL(SUM(value(l).mandatos), 0) INTO ret_variable FROM table(SELF.listas) l;
+        SELECT NVL(SUM(value(l).mandatos), 0) INTO ret_variable FROM TABLE(SELF.listas) l;
         RETURN ret_variable;
    END total_mandatos;
    
