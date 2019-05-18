@@ -1,5 +1,6 @@
 import xmltodict
 import json
+from pymongo import MongoClient
 
 # Parses key to lowercase strings (more conventional for mongo) and parses int values as int (when applicable)
 def postprocessor(path, key, value):
@@ -25,4 +26,9 @@ MY_XML_HERE = """..."""
 
 my_dict = xmltodict.parse(MY_XML_HERE, postprocessor=postprocessor, encoding='ISO-8859-1')
 
-print(json.dumps(parse_one_item_arrays(my_dict), indent=4, ensure_ascii=False))
+client = MongoClient("mongodb://tbda:grupoa@vdbase.inesctec.pt:27017/tbda?authSource=admin")
+db = client["tbda"]
+coll = db["districts"]
+coll.insert_many(parse_one_item_arrays(my_dict)['data']['district'])
+
+#print(json.dumps(parse_one_item_arrays(my_dict), indent=4, ensure_ascii=False))
