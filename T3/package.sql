@@ -10,13 +10,14 @@ create or replace package body export_cultural_facilities as
 procedure get_municipalities(district_cod gtd8.districts.cod%type) is
 begin
 dbms_output.enable(null);
-for municipality in (select m.cod as m_cod, m.designation as m_des, r.cod as r_cod, r.designation as r_des, r.nut1 from gtd8.municipalities m inner join gtd8.regions r on m.region = r.cod where m.district = district_cod) loop
+for municipality in (select m.cod as m_cod, m.designation as m_des, r.cod as r_cod, r.designation as r_des, r.nut1 as r_nut1 from gtd8.municipalities m inner join gtd8.regions r on m.region = r.cod where m.district = district_cod) loop
 dbms_output.put_line('<MUNICIPALITIES>');
 dbms_output.put_line('<COD>' || municipality.m_cod || '</COD>');
 dbms_output.put_line('<DESIGNATION>' || municipality.m_des || '</DESIGNATION>');
 dbms_output.put_line('<REGION>');
 dbms_output.put_line('<COD>' || municipality.r_cod || '</COD>');
 dbms_output.put_line('<DESIGNATION>' || municipality.r_des || '</DESIGNATION>');
+dbms_output.put_line('<NUT1>' || municipality.r_nut1 || '</NUT1>');
 dbms_output.put_line('</REGION>');
 
 get_facilities(municipality.m_cod);
@@ -55,7 +56,7 @@ begin
 dbms_output.enable(null);
 dbms_output.put_line('<?xml version="1.0" encoding="iso-8859-1" ?>');
 dbms_output.put_line('<DATA>');
-for district in (select d.cod as d_cod, d.designation as d_des, r.cod as r_cod, r.designation as r_des, r.nut1 from gtd8.districts d left join gtd8.regions r on d.region = r.cod) loop
+for district in (select d.cod as d_cod, d.designation as d_des, r.cod as r_cod, r.designation as r_des, r.nut1 as r_nut1 from gtd8.districts d left join gtd8.regions r on d.region = r.cod offset 19 rows fetch next row only) loop
 dbms_output.put_line('<DISTRICTS>');
 dbms_output.put_line('<_ID>' || district.d_cod || '</_ID>');
 dbms_output.put_line('<DESIGNATION>' || district.d_des || '</DESIGNATION>');
@@ -64,6 +65,7 @@ if district.r_cod is not null then
 dbms_output.put_line('<REGION>');
 dbms_output.put_line('<COD>' || district.r_cod || '</COD>');
 dbms_output.put_line('<DESIGNATION>' || district.r_des || '</DESIGNATION>');
+dbms_output.put_line('<NUT1>' || district.r_nut1 || '</NUT1>');
 dbms_output.put_line('</REGION>');
 end if;
 
