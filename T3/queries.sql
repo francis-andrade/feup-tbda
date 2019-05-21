@@ -12,18 +12,19 @@ SELECT * FROM GTD8.roomtypes;
 
 SELECT * FROM GTD8.regions;
 
+SELECT * FROM GTD8.municipalities WHERE region = 3;
 ----------------------------------
 --a)------------------------------
 ----------------------------------
-SELECT f.name AS "Facility", r.description AS "Room Type Description"
+SELECT f.id AS "Facility ID", f.name AS "Facility Name", r.description AS "Room Type Description", a.activity AS "Activity"
 FROM GTD8.facilities f JOIN GTD8.roomtypes r ON f.roomtype = r.roomtype 
 JOIN GTD8.uses u ON f.id = u.id JOIN GTD8.activities a ON u.ref = a.ref 
 WHERE r.description LIKE '%touros%' AND a.activity = 'teatro'
-ORDER BY f.name;
+ORDER BY f.id;
 ----------------------------------
 --b)------------------------------
 ----------------------------------
-SELECT reg.designation AS "Region", COUNT(DISTINCT f.id) AS "Number of facilities"
+SELECT reg.designation AS "Region", COUNT(DISTINCT f.id) AS "No. Facilities"
 FROM GTD8.facilities f JOIN GTD8.roomtypes r ON f.roomtype = r.roomtype 
 JOIN GTD8.uses u ON f.id = u.id JOIN GTD8.activities a ON u.ref = a.ref 
 JOIN GTD8.municipalities m ON f.municipality = m.cod JOIN GTD8.regions reg ON m.region = reg.cod  
@@ -33,7 +34,7 @@ ORDER BY reg.designation;
 ----------------------------------
 --c)------------------------------
 ----------------------------------
-SELECT COUNT(*) AS "Municipalities Number" FROM GTD8.municipalities m
+SELECT COUNT(*) AS "No. Municipalities" FROM GTD8.municipalities m
 WHERE NOT EXISTS (
     SELECT * FROM GTD8.facilities f JOIN GTD8.uses u ON f.id = u.id 
     JOIN GTD8.activities a ON u.ref = a.ref WHERE m.cod = f.municipality AND a.activity = 'cinema' 
