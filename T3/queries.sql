@@ -1,3 +1,4 @@
+-- Auxiliary Queries
 SELECT * FROM GTD8.distritos;
 
 SELECT * FROM GTD8.municipalities;
@@ -12,7 +13,6 @@ SELECT * FROM GTD8.roomtypes;
 
 SELECT * FROM GTD8.regions;
 
-SELECT * FROM GTD8.municipalities WHERE region = 3;
 ----------------------------------
 --a)------------------------------
 ----------------------------------
@@ -65,3 +65,23 @@ WHERE NOT EXISTS (
     ) 
 )
 ORDER BY d.cod;
+------------------------------------------------------------------------------------------
+--f)--------------------------------------------------------------------------------------
+--For each district find the percentage of municipalities that have facilities for cinema-
+------------------------------------------------------------------------------------------
+WITH dist_cinema AS (
+SELECT d.cod AS dist, COUNT(DISTINCT m.cod) AS count
+FROM GTD8.activities a, GTD8.uses u, GTD8.facilities f, GTD8.municipalities m, GTD8.distritos d
+WHERE a.activity = 'cinema' AND a.ref = u.ref AND u.id = f.id AND f.municipality = m.cod AND m.district = d.cod
+GROUP BY d.cod),
+dist_mun AS (
+SELECT d.cod AS dist, COUNT(m.cod) AS count
+FROM GTD8.municipalities m, GTD8.distritos d
+WHERE m.district = d.cod
+GROUP BY d.cod
+)
+SELECT d.designacao AS "Distrito", round(100*(aux1.count/aux2.count), 1) AS "Percentage"
+FROM dist_cinema aux1, dist_mun aux2, GTD8.distritos d
+WHERE aux1.dist = aux2.dist AND aux1.dist = d.cod
+ORDER BY d.designacao
+;

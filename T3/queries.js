@@ -77,7 +77,6 @@ Result:
 ----------------------------------
 */
  db.districts.aggregate([
-			{$project: {"_id": 0}},
 			{$unwind: "$municipalities"},
 			{$match: {"municipalities.facilities.activities": {$nin: ["cinema"]}}},
             {$count: "NoMunicipalities"}
@@ -176,6 +175,97 @@ Result:
     {
         "Code" : 7,
         "Designation" : "Évora"
+    }
+]
+*/
+/*
+------------------------------------------------------------------------------------------
+--f)--------------------------------------------------------------------------------------
+--For each district find the percentage of municipalities that have facilities for cinema-
+------------------------------------------------------------------------------------------
+*/
+ db.districts.aggregate([
+                        {$addFields: {"size_mun": {$size: "$municipalities"}}},
+                        {$unwind: "$municipalities"},
+						{$match: {"municipalities.facilities.activities": {$in: ["cinema"]}}},
+                        {$group: {_id: {"designation": "$designation","size_mun": "$size_mun"}, count: {$sum: 1}}},
+                        {$project: {_id:0, "Distrito": "$_id.designation","Percentage": {$divide: [{$multiply: ["$count", 100]}, "$_id.size_mun"] }}},
+                        {$sort: {"Distrito": 1}}
+                        ]);
+/*
+Result:
+[
+    {
+        "Distrito" : "Aveiro",
+        "Percentage" : 89.4736842105263
+    },
+    {
+        "Distrito" : "Beja",
+        "Percentage" : 78.5714285714286
+    },
+    {
+        "Distrito" : "Braga",
+        "Percentage" : 57.1428571428571
+    },
+    {
+        "Distrito" : "Bragança",
+        "Percentage" : 66.6666666666667
+    },
+    {
+        "Distrito" : "Castelo Branco",
+        "Percentage" : 63.6363636363636
+    },
+    {
+        "Distrito" : "Coimbra",
+        "Percentage" : 58.8235294117647
+    },
+    {
+        "Distrito" : "Faro",
+        "Percentage" : 75.0
+    },
+    {
+        "Distrito" : "Guarda",
+        "Percentage" : 85.7142857142857
+    },
+    {
+        "Distrito" : "Leiria",
+        "Percentage" : 75.0
+    },
+    {
+        "Distrito" : "Lisboa",
+        "Percentage" : 100.0
+    },
+    {
+        "Distrito" : "Portalegre",
+        "Percentage" : 73.3333333333333
+    },
+    {
+        "Distrito" : "Porto",
+        "Percentage" : 77.7777777777778
+    },
+    {
+        "Distrito" : "Santarém",
+        "Percentage" : 71.4285714285714
+    },
+    {
+        "Distrito" : "Setúbal",
+        "Percentage" : 100.0
+    },
+    {
+        "Distrito" : "Viana do Castelo",
+        "Percentage" : 60.0
+    },
+    {
+        "Distrito" : "Vila Real",
+        "Percentage" : 50.0
+    },
+    {
+        "Distrito" : "Viseu",
+        "Percentage" : 66.6666666666667
+    },
+    {
+        "Distrito" : "Évora",
+        "Percentage" : 92.8571428571429
     }
 ]
 */
