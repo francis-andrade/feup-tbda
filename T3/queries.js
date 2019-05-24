@@ -190,6 +190,10 @@ Result:
 						{$match: {"municipalities.facilities.activities": {$in: ["cinema"]}}},
                         {$group: {_id: {"designation": "$designation","size_mun": "$size_mun"}, count: {$sum: 1}}},
                         {$project: {_id:0, "Distrito": "$_id.designation","Percentage": {$divide: [{$multiply: ["$count", 100]}, "$_id.size_mun"] }}},
+                        {$project: {"Distrito": 1, "Percentage": {$subtract: [
+                                                                              {$add:['$Percentage',0.0499999999999999999]},
+                                                                              {$mod:[{$add:['$Percentage',0.0499999999999999999]}, 0.1]}]}
+                                                                              }},
                         {$sort: {"Distrito": 1}}
                         ]);
 /*
@@ -197,27 +201,27 @@ Result:
 [
     {
         "Distrito" : "Aveiro",
-        "Percentage" : 89.4736842105263
+        "Percentage" : 89.5
     },
     {
         "Distrito" : "Beja",
-        "Percentage" : 78.5714285714286
+        "Percentage" : 78.6
     },
     {
         "Distrito" : "Braga",
-        "Percentage" : 57.1428571428571
+        "Percentage" : 57.1
     },
     {
         "Distrito" : "Bragança",
-        "Percentage" : 66.6666666666667
+        "Percentage" : 66.7
     },
     {
         "Distrito" : "Castelo Branco",
-        "Percentage" : 63.6363636363636
+        "Percentage" : 63.6
     },
     {
         "Distrito" : "Coimbra",
-        "Percentage" : 58.8235294117647
+        "Percentage" : 58.8
     },
     {
         "Distrito" : "Faro",
@@ -225,7 +229,7 @@ Result:
     },
     {
         "Distrito" : "Guarda",
-        "Percentage" : 85.7142857142857
+        "Percentage" : 85.7
     },
     {
         "Distrito" : "Leiria",
@@ -237,15 +241,15 @@ Result:
     },
     {
         "Distrito" : "Portalegre",
-        "Percentage" : 73.3333333333333
+        "Percentage" : 73.3
     },
     {
         "Distrito" : "Porto",
-        "Percentage" : 77.7777777777778
+        "Percentage" : 77.8
     },
     {
         "Distrito" : "Santarém",
-        "Percentage" : 71.4285714285714
+        "Percentage" : 71.4
     },
     {
         "Distrito" : "Setúbal",
@@ -261,11 +265,10 @@ Result:
     },
     {
         "Distrito" : "Viseu",
-        "Percentage" : 66.6666666666667
+        "Percentage" : 66.7
     },
     {
         "Distrito" : "Évora",
-        "Percentage" : 92.8571428571429
+        "Percentage" : 92.9
     }
-]
-*/
+]*/
