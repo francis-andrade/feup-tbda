@@ -22,11 +22,11 @@ def parse_one_item_arrays(m_dict):
                             f['activities'] = [f['activities']]
     return m_dict
 
-MY_XML_HERE = """..."""
+XML_DATA = ''.join([line.rstrip('\n\t') for line in open('export.tsv')])
+my_dict = xmltodict.parse(XML_DATA, postprocessor=postprocessor)
 
-my_dict = xmltodict.parse(MY_XML_HERE, postprocessor=postprocessor)
-
-client = pymongo.MongoClient("mongodb://tbda:grupoa@vdbase.inesctec.pt:27017/tbda?authSource=admin")
+#client = pymongo.MongoClient("mongodb://tbda:grupoa@vdbase.inesctec.pt:27017/tbda?authSource=admin")
+client = pymongo.MongoClient("mongodb://localhost:27017/tbda")
 db = client["tbda"]
 coll = db["districts"]
 try:
